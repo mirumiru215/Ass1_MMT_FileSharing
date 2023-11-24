@@ -126,7 +126,11 @@ class Client:
         else:
             print('Invalid Command')
 
-
+    def quitCli(self):
+        self.disconnect(self.client_socket, self.server_IP, self.server_Port)
+        self.isConnected = False
+        self.client_server.close()
+        exit(0)
     ####### Disconnect from server ########
     def disconnect(self, my_socket = sk.socket, other_IP = '127.0.0.1', other_Port = 4869):
 

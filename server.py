@@ -58,7 +58,7 @@ class Server:
         if option.startswith('discover'):
             print(self.discover(option.split(' ')[1]))
         elif option.startswith('ping'):
-            print(self.ping(option.split(' ')[1]))
+            self.ping(option.split(' ')[1])
 
 
     def handle_client(self, client_socket, client_address, client_name):
@@ -129,13 +129,16 @@ class Server:
 
     def ping(self, hostname = ''):
         if hostname not in self.connectedClient:
-            return 'This host have not connected to server yet.'
+            output = 'This host have not connected to server yet.'
         else:
             if hostname in self.onlineClient:
                 output = 'Online'
             else:
                 output = 'Offline'
-            return output
+
+        print(output)
+        return output
+
 
     def discover(self, hostname = ''):
         if hostname in self.connectedClient:
