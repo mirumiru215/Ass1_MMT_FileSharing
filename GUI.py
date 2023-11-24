@@ -3,7 +3,7 @@ import customtkinter as ctk
 from client import *
 import threading
 import time
-from tkinter import filedialog
+from tkinter import END, filedialog
 import os
 from tkinter import messagebox
 
@@ -135,12 +135,19 @@ class MyApp:
 
     def openFile(self): 
         filepath = filedialog.askopenfilename()
-        # print(filepath.split('/')[-1:])
         directory, filename = os.path.split(filepath)
         print(directory)
         print(filename)
         self.client.publish(directory,filename)
-        self.repo_list.insert(tk.END,filename)
+        
+        self.repo_list.delete(0,END)
+        path = os.getcwd()
+        newpath = path + '/repository'
+        repo_filename = os.listdir(newpath)
+        for filename in repo_filename:
+            self.repo_list.insert(tk.END,filename)
+
+        
 
     def quitCli(self):
         self.app.withdraw()

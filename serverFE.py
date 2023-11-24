@@ -90,6 +90,16 @@ class ServerUI:
         discoverHostname_Button = ctk.CTkButton(master=self.main_Frame, text='DISCOVER', command=self.discover_hostname)
         discoverHostname_Button.place(relx=0.8, y=360, anchor=tk.CENTER)
 
+        self.font3 = ('Arial',10,'bold')
+        self.repo_list = tk.Listbox(master=self.main_Frame,width=40, height=15, font=self.font3)
+        self.repo_list.pack(anchor='w')
+
+        self.font3 = ('Arial',10,'bold')
+        self.connected_list = tk.Listbox(master=self.main_Frame,width=40, height=15, font=self.font3)
+        self.connected_list.pack(anchor='w')
+
+        self.connect_Button = ctk.CTkButton(master=self.main_Frame, text='F5', command=self.F5_display_connectedList)
+        self.connect_Button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
     def ping_hostname(self):
         hostname = self.pingHostname_Entry.get()
@@ -101,14 +111,10 @@ class ServerUI:
 
 
     def display_repo(self, hostname=''):
-        self.font3 = ('Arial',10,'bold')
-        self.repo_list = tk.Listbox(master=self.main_Frame,width=40, height=15, font=self.font3)
-        self.repo_list.pack(anchor='w')
         self.repo_list.delete(0,END)
         if hostname in self.server.connectedClient:
             for filename in self.server.clientFileList[self.server.connectedClient[hostname]]:
                 self.repo_list.insert(tk.END,filename)
-        
 
     def discover_hostname(self):
         hostname = self.discoverHostname_Entry.get()
@@ -119,10 +125,12 @@ class ServerUI:
         self.server.discover(hostname)
         self.display_repo(hostname)
         
+    def F5_display_connectedList(self):
+        self.connected_list.delete(0,END)
+        for hostname in self.server.connectedClient:
+            self.connected_list.insert(tk.END, hostname)
     
 
-
-    
 
 if __name__ == '__main__':
     app = ServerUI()
