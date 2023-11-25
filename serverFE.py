@@ -64,7 +64,9 @@ class ServerUI:
                                 height=600,
                                 )
         self.main_Frame.pack(padx=10, pady=10, expand=True, fill="both", side="left")
-
+        server_ip_text = "Server is listening on " + str(self.server.server_ip) + ":" + str(self.server.server_port)
+        main_Label = tk.Label(self.main_Frame, text=server_ip_text, font=("Family", 12, 'bold'), fg='black', bg='gray')
+        main_Label.place(anchor='nw')
         #### CONNECTED FRAME
         self.connected_Frame = ctk.CTkFrame(master=self.main_Frame,
                             width=300,

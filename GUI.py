@@ -20,8 +20,8 @@ class MyApp:
     def setup(self):
         ctk.set_appearance_mode('dark')
         ctk.set_default_color_theme('blue')
-        self.app.title('ClientUI')
-        self.app.geometry('800x400')
+        self.app.title('Client')
+        self.app.geometry('650x400')
 
 
     def UIobject(self):
@@ -31,40 +31,43 @@ class MyApp:
                             bg_color='black')
         self.login_Frame.pack(padx=10, pady=10, expand=True, fill="both", side="left")
 
+        self.Entry_Frame = ctk.CTkFrame(master=self.login_Frame,
+                            width=250,
+                            height=100,
+                           )
+        self.Entry_Frame.place(relx=0.5,rely=0.3,anchor=tk.CENTER)
+        
 
-        self.serverIP_Entry = ctk.CTkEntry(master=self.login_Frame,
+        self.serverIP_Entry = ctk.CTkEntry(master=self.Entry_Frame,
                                     placeholder_text='Server IP',
                                     width=200,
                                     height=30,
                                     text_color='white',
                                     corner_radius=10)
         self.serverIP_Entry.configure(state='normal')
-        self.serverIP_Entry.place(x=120, y=20)
+        self.serverIP_Entry.pack(padx=5, pady=5, expand=True, fill="none", side="top", anchor="ne")
 
-        self.hostname_Entry = ctk.CTkEntry(master=self.login_Frame,
+        self.hostname_Entry = ctk.CTkEntry(master=self.Entry_Frame,
                                     placeholder_text='Hostname',
                                     width=200,
                                     height=30,
                                     text_color='white',
                                     corner_radius=10)
         self.hostname_Entry.configure(state='normal')
-        self.hostname_Entry.place(x=120, y=60)
+        self.hostname_Entry.pack(padx=5, pady=5, expand=True, fill="none", side="bottom", anchor="ne")
 
-        
-
+    
         self.connect_Button = ctk.CTkButton(master=self.app, text='Connect', command=self.start_connect)
-        self.connect_Button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+        self.connect_Button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
     
 
     def start_connect(self):
+        if not self.serverIP_Entry.get() or not self.hostname_Entry.get():
+            messagebox.showerror("Error", "Please fill in both Server IP and Hostname!")
+            return
         SERVER_IP = self.serverIP_Entry.get()
         SERVER_PORT = 4869
         hostname = self.hostname_Entry.get()
-
-        if not SERVER_IP or not hostname:
-            # Handle empty fields
-            print("Please enter both Server IP and Hostname.")
-            return
 
         self.client = Client(SERVER_IP, SERVER_PORT, hostname)
         self.client.start()
@@ -72,37 +75,34 @@ class MyApp:
         
         # Hide the login frame
         self.login_Frame.pack_forget()
-
         self.show_repository_frame()
 
-    
-
     def show_repository_frame(self):
-        # Create a new frame for repository display
+        #### MAIN FRAME
         self.repo_frame = ctk.CTkFrame(master=self.app, width=800, height=400, bg_color='black')
         self.repo_frame.pack(padx=10, pady=10, expand=True, fill="both", side="left")
 
-        # Add labels, lists, or any other widgets to display the repositories
-        # Customize this based on your repository data structure
-
-        # Example label
         self.font1 = ('Arial',20,'bold')
         self.font2 = ('Arial',15,'bold')
         self.font3 = ('Arial',10,'bold')
         self.user_repo_label = ctk.CTkLabel(master=self.repo_frame,font=self.font1, text='File Sharing', text_color='white')
         self.user_repo_label.pack()
 
-        self.publish_button = ctk.CTkButton(master=self.repo_frame, 
-                                            font=self.font2, text_color='white', 
-                                            text='Publish', fg_color='#06911f', 
-                                            hover_color='#06911f', 
-                                            bg_color = '#09112e', 
-                                            cursor= 'hand2', corner_radius=5, width=120, command=self.openFile)
-        self.publish_button.place(x=300, y=80)
+        #### HOST REPO FRAME
+        self.Host_Repo_Frame = ctk.CTkFrame(master=self.repo_frame,
+                            width=240,
+                            height=400,
+                            fg_color='gray'
+                           )
+        self.Host_Repo_Frame.pack(padx=10, pady=10, expand=True, fill="none", side="left")
+        self.Host_Repo_Frame.place(x = 30,y=60)
 
-        self.repo_list = tk.Listbox(master=self.repo_frame,width=40, height=15, font=self.font3)
-        # repo_list.place(x=40, y=80)
-        self.repo_list.pack(anchor='w')
+        repo_Label = tk.Label(self.Host_Repo_Frame, text="Repository", font=("Family", 15, 'bold'), fg='black', bg='gray')
+        repo_Label.place(relx=0.3, anchor='nw')
+
+        self.repo_list = tk.Listbox(master=self.Host_Repo_Frame,width=40, height=15, font=self.font3)
+        self.repo_list.pack(side="bottom", anchor="se",padx=30,pady=35)
+        self.repo_list.config(bg="white",borderwidth=2, relief="groove",selectmode="BROWSE")
 
         path = os.getcwd()
         newpath = path + '/repository'
@@ -110,28 +110,50 @@ class MyApp:
         
         for filename in repo_filename:
             self.repo_list.insert(tk.END,filename)
-        
 
-        self.quit_Button = ctk.CTkButton(master=self.repo_frame, text='Quit', command=self.quitCli)
-        self.quit_Button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
-        
-        self.fetch_Entry = ctk.CTkEntry(master=self.repo_frame,
+        #### OPTIONS FRAME
+        self.options_Frame = ctk.CTkFrame(master=self.repo_frame,
+                            width=240,
+                            height=270,
+                           )
+        self.options_Frame.pack(padx=5, pady=5,  fill="none", side="top", anchor="ne")
+        self.options_Frame.place(x = 350,y=60)
+
+        #### PUBLISH BUTTON
+        self.publish_button = ctk.CTkButton(master=self.options_Frame, 
+                                            font=self.font2, text_color='white', 
+                                            text='Publish', fg_color='#06911f', 
+                                            hover_color='#06911f', 
+                                            bg_color = '#09112e', 
+                                            cursor= 'hand2', corner_radius=5, width=120, command=self.openFile)
+        self.publish_button.place(relx=0.25, rely=0.05)
+
+        #### FETCH BUTTON
+        self.fetch_Entry = ctk.CTkEntry(master=self.options_Frame,
                                     placeholder_text='File name',
-                                    width=200,
+                                    width=150,
                                     height=30,
                                     text_color='white',
                                     corner_radius=10)
         self.fetch_Entry.configure(state='normal')
-        self.fetch_Entry.place(x=400, y=200)
+        self.fetch_Entry.place(relx=0.19, rely=0.3)
 
-        self.fetch_button = ctk.CTkButton(master=self.repo_frame, 
+        self.fetch_button = ctk.CTkButton(master=self.options_Frame, 
                                             font=self.font2, text_color='white', 
                                             text='Fetch', fg_color='#06911f', 
                                             hover_color='#06911f', 
                                             bg_color = '#09112e', 
                                             cursor= 'hand2', corner_radius=5, width=120, command=self.fetchFile)
-        self.fetch_button.place(x=300, y=120)
-            
+        self.fetch_button.place(relx=0.25, rely=0.45)
+
+        #### DISCONNECT BUTTON
+        self.quit_Button = ctk.CTkButton(master=self.options_Frame, 
+                                            font=self.font2, text_color='white', 
+                                            text='Disconnect', fg_color='red', 
+                                            hover_color='#990000', 
+                                            cursor= 'hand2', corner_radius=5, width=120, command=self.quitCli)
+        self.quit_Button.place(relx=0.25, rely=0.8)
+
 
     def openFile(self): 
         filepath = filedialog.askopenfilename()
