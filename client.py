@@ -159,7 +159,6 @@ class Client:
 
 
     def publish(self, lname = '', fname = ''):
-        
         filePath = os.path.join(lname, fname)
         if not os.path.exists(filePath):
             print('This file does not exist on your system.')
@@ -172,6 +171,7 @@ class Client:
         server_respond = self.client_socket.recv(SIZE).decode(FORMAT)
         _, server_message = server_respond.split('@')
         print(server_message)
+        return server_message
 
 
     def fetch(self, fname = ''):

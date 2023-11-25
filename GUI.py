@@ -82,12 +82,18 @@ class MyApp:
         self.repo_frame = ctk.CTkFrame(master=self.app, width=800, height=400, bg_color='black')
         self.repo_frame.pack(padx=10, pady=10, expand=True, fill="both", side="left")
 
+        name = "Hostname: " + self.hostname_Entry.get()
+        Hostname_label = tk.Label(master=self.repo_frame, text=name, fg='white',bg='gray', font=("Family", 14))
+        Hostname_label.place(relx=0.1, rely=0.05)
+
+
         self.font1 = ('Arial',20,'bold')
         self.font2 = ('Arial',15,'bold')
         self.font3 = ('Arial',10,'bold')
         self.user_repo_label = ctk.CTkLabel(master=self.repo_frame,font=self.font1, text='File Sharing', text_color='white')
         self.user_repo_label.pack()
 
+        
         #### HOST REPO FRAME
         self.Host_Repo_Frame = ctk.CTkFrame(master=self.repo_frame,
                             width=240,
@@ -160,7 +166,12 @@ class MyApp:
         directory, filename = os.path.split(filepath)
         print(directory)
         print(filename)
-        self.client.publish(directory,filename)
+        msg = self.client.publish(directory,filename)
+
+        if msg == "Uploaded successfully!":
+            messagebox.showinfo("Success", msg)
+        else:
+            messagebox.showerror("Error", msg)
         
         self.repo_list.delete(0,END)
         path = os.getcwd()
@@ -168,25 +179,43 @@ class MyApp:
         repo_filename = os.listdir(newpath)
         for filename in repo_filename:
             self.repo_list.insert(tk.END,filename)
-
         
-
     def quitCli(self):
         self.app.withdraw()
         self.client.quitCli()
-    
+
     def fetchFile(self):
-        if self.fetch_Entry.get() == '':
-            messagebox.showinfo("Error", "Please enter file name!")
-        else:
+        # Create a loading indicator label
+        loading_label = tk.Label(master=self.repo_frame, text='Loading...', fg='white',bg='black', font=("Arial", 14))
+        loading_label.pack(padx=10, pady=10,side='bottom')
+
+        # Start the fetch operation in a separate thread
+        def fetch_thread():
             msg = self.client.fetch(self.fetch_Entry.get())
             if msg == 'These are clients having the file:':
-                self.repo_list.insert(tk.END,self.fetch_Entry.get())
+                self.repo_list.insert(tk.END, self.fetch_Entry.get())
                 messagebox.showinfo("Success", "Done fetch file!")
             else:
-                messagebox.showerror("Error",msg)
+                messagebox.showerror("Error", msg)
+
+            # Remove the loading indicator
+            loading_label.destroy()
+
+        thread = threading.Thread(target=fetch_thread)
+        thread.start()
 
 
+    #############DON'T DELETE THIS#################
+    # def fetchFile(self):
+    #     if self.fetch_Entry.get() == '':
+    #         messagebox.showinfo("Error", "Please enter file name!")
+    #     else:
+    #         msg = self.client.fetch(self.fetch_Entry.get())
+    #         if msg == 'These are clients having the file:':
+    #             self.repo_list.insert(tk.END,self.fetch_Entry.get())
+    #             messagebox.showinfo("Success", "Done fetch file!")
+    #         else:
+    #             messagebox.showerror("Error",msg)
 
 if __name__ == '__main__':
     app = MyApp()

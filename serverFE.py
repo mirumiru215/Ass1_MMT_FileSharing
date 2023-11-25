@@ -5,7 +5,7 @@ import customtkinter as ctk
 from customtkinter import ThemeManager
 from server import *
 import threading
-
+import pyperclip
 
 def get_local_ip():
     s = sk.socket(sk.AF_INET, sk.SOCK_DGRAM)
@@ -26,6 +26,8 @@ class ServerUI:
         self.app = ctk.CTk()
         # super().__init__()
         self.server = Server(SERVER_IP, SERVER_PORT)
+        svip = SERVER_IP
+        pyperclip.copy(svip)
         self.UIObject()
         self.main_Frame.pack_forget()
 
