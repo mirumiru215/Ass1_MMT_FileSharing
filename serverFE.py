@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 import customtkinter as ctk
+from customtkinter import ThemeManager
 from server import *
 import threading
 
@@ -26,80 +27,127 @@ class ServerUI:
         # super().__init__()
         self.server = Server(SERVER_IP, SERVER_PORT)
         self.UIObject()
-
+        self.main_Frame.pack_forget()
 
     def setup(self):
         ctk.set_appearance_mode('light')
         ctk.set_default_color_theme('blue')
-        self.app.title('ServerUI')
-        self.app.geometry('800x400')
+        self.app.title('Server')
+        self.app.geometry('700x500')
         
-    
     def run_server(self):
         self.server.start()
 
     def start_connect(self):
         self.login_Frame.pack_forget()
         self.main_Frame.pack(padx=10, pady=10, expand=True, fill='both', side='left')
-
         server_thread = threading.Thread(target=self.run_server)
         server_thread.start()
         
 
     def UIObject(self):
+        #### LOGIN FRAME
         self.login_Frame = ctk.CTkFrame(master=self.app,
                             width=800,
                             height=200,
-                            bg_color='black')
-        self.login_Frame.pack(padx=10, pady=10, expand=True, fill="both", side="left")
-        self.connect_Button = ctk.CTkButton(master=self.login_Frame, text='START SERVER', command=self.start_connect)
-        self.connect_Button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+                           )
+        self.login_Frame.pack(padx=10, pady=10, expand=True, fill="both", side="top")
+        button_font = ('Family',17,'bold')
+        self.connect_Button = ctk.CTkButton(master=self.login_Frame, font = button_font,text='START SERVER', command=self.start_connect)
+        # self.connect_Button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+        self.connect_Button.pack(padx=10, pady=230)
+        self.font3 = ('Arial',10,'bold')
 
-
-
+        #### MAIN FRAME
         self.main_Frame = ctk.CTkFrame(master=self.app,
                                 width=800,
                                 height=600,
-                                bg_color='white')
+                                )
         self.main_Frame.pack(padx=10, pady=10, expand=True, fill="both", side="left")
 
-        self.pingHostname_Entry = ctk.CTkEntry(master=self.main_Frame,
+        #### CONNECTED FRAME
+        self.connected_Frame = ctk.CTkFrame(master=self.main_Frame,
+                            width=300,
+                            height=300,
+                            fg_color='gray'
+                           )
+        self.connected_Frame.pack(padx=50, pady=60, expand=True, fill="none", side="left")
+
+        repo_Label = tk.Label(self.connected_Frame, text="Hostname List", font=("Family", 15, 'bold'), fg='black', bg='gray')
+        repo_Label.place(relx=0.3, anchor='nw')
+
+        self.connected_list = tk.Listbox(master=self.connected_Frame,width=40, height=15, font=self.font3)
+        self.connected_list.pack(side="bottom", anchor="se",padx=30,pady=35)
+        self.connected_list.config(bg="white",borderwidth=2, relief="groove",selectmode="BROWSE")
+
+        self.connect_Button = ctk.CTkButton(master=self.connected_Frame,width=30, height=16,text='F5', command=self.F5_display_connectedList)
+        self.connect_Button.place(relx=0.5, rely=0.985, anchor='s')
+
+        #### OPTIONS FRAME WHICH INCLUDES PING FRAME AND DISCOVER FRAME
+        self.options_Frame = ctk.CTkFrame(master=self.main_Frame,
+                            width=300,
+                            height=250,
+                           )
+        self.options_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="top", anchor="ne")
+        #### PING FRAME
+        self.ping_Frame = ctk.CTkFrame(master=self.options_Frame,
+                            width=300,
+                            height=100,
+                            fg_color='gray'
+                           )
+        self.ping_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="top", anchor="ne")
+        # n, ne, e, se, s, sw, w, nw, or center
+        pingHostname_Label = tk.Label(self.ping_Frame, text="Ping Hostname", font=("Family", 14), fg='black', bg='gray')
+        pingHostname_Label.place(relx=0.1, rely=0.15, anchor='nw')
+        self.pingHostname_Entry = ctk.CTkEntry(master=self.ping_Frame,
                                     placeholder_text='Enter Hostname',
-                                    width=200,
+                                    width=180,
                                     height=30,
                                     text_color='black',
                                     corner_radius=10)
-        pingHostname_Label = tk.Label(self.main_Frame, text="Ping Hostname",  font=("Arial", 14))
-        pingHostname_Label.place(relx=0.8,y=100, anchor=tk.CENTER)
         self.pingHostname_Entry.configure(state='normal')
-        self.pingHostname_Entry.place(relx=0.8,y=120, anchor=tk.CENTER)
-        self.discoverHostname_Entry = ctk.CTkEntry(master=self.main_Frame,
+        self.pingHostname_Entry.place(relx=0.35, rely=0.6, anchor=tk.CENTER)
+
+        pingHostname_Button = ctk.CTkButton(master=self.ping_Frame,width=85, height=30, text='PING', command=self.ping_hostname)
+        pingHostname_Button.place(relx=0.8, rely=0.6, anchor=tk.CENTER)
+
+        #### DISCOVER FRAME
+        self.discover_Frame = ctk.CTkFrame(master=self.options_Frame,
+                            width=300,
+                            height=100,
+                            fg_color='gray'
+                           )
+        self.discover_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="bottom", anchor="se")
+
+        self.discoverHostname_Entry = ctk.CTkEntry(master=self.discover_Frame,
                                     placeholder_text='Enter Hostname',
-                                    width=200,
+                                    width=180,
                                     height=30,
                                     text_color='black',
                                     corner_radius=10)
-        discoverHostname_Label = tk.Label(self.main_Frame, text="Discover Hostname",  font=("Arial", 14))
-        discoverHostname_Label.place(relx=0.8, y=300, anchor=tk.CENTER)
+        discoverHostname_Label = tk.Label(self.discover_Frame, text="Discover Hostname",  font=("Arial", 14),fg='black', bg='gray')
+        discoverHostname_Label.place(relx=0.1, rely=0.15, anchor='nw')
         self.discoverHostname_Entry.configure(state='normal')
-        self.discoverHostname_Entry.place(relx=0.8, y=300.005, anchor=tk.CENTER)
-
-        pingHostname_Button = ctk.CTkButton(master=self.main_Frame, text='PING', command=self.ping_hostname)
-        pingHostname_Button.place(relx=0.8, y=180, anchor=tk.CENTER)
+        self.discoverHostname_Entry.place(relx=0.35, rely=0.6, anchor=tk.CENTER)
             
-        discoverHostname_Button = ctk.CTkButton(master=self.main_Frame, text='DISCOVER', command=self.discover_hostname)
-        discoverHostname_Button.place(relx=0.8, y=360, anchor=tk.CENTER)
+        discoverHostname_Button = ctk.CTkButton(master=self.discover_Frame,width=85, height=30, text='DISCOVER', command=self.discover_hostname)
+        discoverHostname_Button.place(relx=0.8, rely=0.6, anchor=tk.CENTER)
 
-        self.font3 = ('Arial',10,'bold')
-        self.repo_list = tk.Listbox(master=self.main_Frame,width=40, height=15, font=self.font3)
-        self.repo_list.pack(anchor='w')
 
-        self.font3 = ('Arial',10,'bold')
-        self.connected_list = tk.Listbox(master=self.main_Frame,width=40, height=15, font=self.font3)
-        self.connected_list.pack(anchor='w')
+        #### REPO FRAME
+        self.repo_Frame = ctk.CTkFrame(master=self.main_Frame,
+                            width=300,
+                            height=400,
+                            fg_color='gray'
+                           )
+        self.repo_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="bottom", anchor="se")
 
-        self.connect_Button = ctk.CTkButton(master=self.main_Frame, text='F5', command=self.F5_display_connectedList)
-        self.connect_Button.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+        repo_Label = tk.Label(self.repo_Frame, text="Repo List", font=("Family", 14), fg='black', bg='gray')
+        repo_Label.place(relx=0.38, anchor='nw')
+
+        self.repo_list = tk.Listbox(master=self.repo_Frame,width=40, height=15, font=self.font3)
+        self.repo_list.pack(side="bottom", anchor="se",padx=50,pady=30)
+        self.repo_list.config(bg="white",borderwidth=2, relief="groove",selectmode="BROWSE")
 
     def ping_hostname(self):
         hostname = self.pingHostname_Entry.get()
@@ -130,7 +178,6 @@ class ServerUI:
         for hostname in self.server.connectedClient:
             self.connected_list.insert(tk.END, hostname)
     
-
 
 if __name__ == '__main__':
     app = ServerUI()
