@@ -21,7 +21,7 @@ class MyApp:
         ctk.set_appearance_mode('dark')
         ctk.set_default_color_theme('blue')
         self.app.title('Client')
-        self.app.geometry('650x400')
+        self.app.geometry('750x450')
 
 
     def UIobject(self):
@@ -84,7 +84,7 @@ class MyApp:
 
         name = "Hostname: " + self.hostname_Entry.get()
         Hostname_label = tk.Label(master=self.repo_frame, text=name, fg='white',bg='gray', font=("Family", 14))
-        Hostname_label.place(relx=0.1, rely=0.05)
+        Hostname_label.place(relx=0.04, rely=0.07)
 
 
         self.font1 = ('Arial',20,'bold')
@@ -125,57 +125,107 @@ class MyApp:
         self.options_Frame.pack(padx=5, pady=5,  fill="none", side="top", anchor="ne")
         self.options_Frame.place(x = 350,y=60)
 
+        self.FD_Frame = ctk.CTkFrame(master=self.options_Frame,
+                            width=300,
+                            height=250,
+                           )
+        self.FD_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="top", anchor="ne")
+        #### FETCH FRAME
+        self.Fetch_Frame = ctk.CTkFrame(master=self.FD_Frame,
+                            width=300,
+                            height=100,
+                            fg_color='gray'
+                           )
+        self.Fetch_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="top", anchor="ne")
+        # n, ne, e, se, s, sw, w, nw, or center
+        fetch_Label = tk.Label(self.Fetch_Frame, text="Fetch file", font=("Family", 14), fg='black', bg='gray')
+        fetch_Label.place(relx=0.1, rely=0.15, anchor='nw')
+        self.fetch_Entry = ctk.CTkEntry(master=self.Fetch_Frame,
+                                    placeholder_text='Enter filename',
+                                    width=180,
+                                    height=30,
+                                    text_color='white',
+                                    corner_radius=10)
+        self.fetch_Entry.configure(state='normal')
+        self.fetch_Entry.place(relx=0.35, rely=0.6, anchor=tk.CENTER)
+
+        fetch_Button = ctk.CTkButton(master=self.Fetch_Frame,width=85, height=30, text='FETCH', command=self.fetchFile)
+        fetch_Button.place(relx=0.8, rely=0.6, anchor=tk.CENTER)
+
+        #### DISCOVER FRAME
+        self.delete_Frame = ctk.CTkFrame(master=self.FD_Frame,
+                            width=300,
+                            height=100,
+                            fg_color='gray'
+                           )
+        self.delete_Frame.pack(padx=5, pady=5, expand=True, fill="none", side="bottom", anchor="se")
+
+        self.delete_Entry = ctk.CTkEntry(master=self.delete_Frame,
+                                    placeholder_text='Enter filename',
+                                    width=180,
+                                    height=30,
+                                    text_color='white',
+                                    corner_radius=10)
+        delete_Label = tk.Label(self.delete_Frame, text="Delete file",  font=("Arial", 14),fg='black', bg='gray')
+        delete_Label.place(relx=0.1, rely=0.15, anchor='nw')
+        self.delete_Entry.configure(state='normal')
+        self.delete_Entry.place(relx=0.35, rely=0.6, anchor=tk.CENTER)
+            
+        delete_Button = ctk.CTkButton(master=self.delete_Frame,width=85, height=30, fg_color='#990000', hover_color='red',text='DELETE', command=self.deleteFile)
+        delete_Button.place(relx=0.8, rely=0.6, anchor=tk.CENTER)
+
         #### PUBLISH BUTTON
-        self.publish_button = ctk.CTkButton(master=self.options_Frame, 
+        self.publish_button = ctk.CTkButton(master=self.repo_frame, 
                                             font=self.font2, text_color='white', 
                                             text='Publish', fg_color='#06911f', 
                                             hover_color='#06911f', 
                                             bg_color = '#09112e', 
                                             cursor= 'hand2', corner_radius=5, width=120, command=self.openFile)
-        self.publish_button.place(relx=0.25, rely=0.05)
+        self.publish_button.place(relx=0.15, rely=0.8)
 
-        #### FETCH BUTTON
-        self.fetch_Entry = ctk.CTkEntry(master=self.options_Frame,
-                                    placeholder_text='Fetch file name',
-                                    width=150,
-                                    height=30,
-                                    text_color='white',
-                                    corner_radius=10)
-        self.fetch_Entry.configure(state='normal')
-        self.fetch_Entry.place(relx=0.19, rely=0.2)
-
-        self.fetch_button = ctk.CTkButton(master=self.options_Frame, 
-                                            font=self.font2, text_color='white', 
-                                            text='Fetch', fg_color='#06911f', 
-                                            hover_color='#06911f', 
-                                            bg_color = '#09112e', 
-                                            cursor= 'hand2', corner_radius=5, width=120, command=self.fetchFile)
-        self.fetch_button.place(relx=0.25, rely=0.35)
-
-        #### DELETE BUTTON
-        self.delete_Entry = ctk.CTkEntry(master=self.options_Frame,
-                                    placeholder_text='Delete File name',
-                                    width=150,
-                                    height=30,
-                                    text_color='white',
-                                    corner_radius=10)
-        self.delete_Entry.configure(state='normal')
-        self.delete_Entry.place(relx=0.19, rely=0.5)
-
-        self.delete_button = ctk.CTkButton(master=self.options_Frame, 
-                                            font=self.font2, text_color='white', 
-                                            text='Delete', fg_color='red', 
-                                            hover_color='#990000', 
-                                            cursor= 'hand2', corner_radius=5, width=120, command=self.deleteFile)
-        self.delete_button.place(relx=0.25, rely=0.65)
         #### DISCONNECT BUTTON
-        self.quit_Button = ctk.CTkButton(master=self.options_Frame, 
+        self.quit_Button = ctk.CTkButton(master=self.repo_frame, 
                                             font=self.font2, text_color='white', 
                                             text='Disconnect', fg_color='red', 
                                             hover_color='#990000', 
                                             cursor= 'hand2', corner_radius=5, width=120, command=self.quitCli)
-        self.quit_Button.place(relx=0.25, rely=0.85)
+        self.quit_Button.place(relx=0.6, rely=0.85)
 
+        # #### FETCH BUTTON
+        # self.fetch_Entry = ctk.CTkEntry(master=self.options_Frame,
+        #                             placeholder_text='Fetch file name',
+        #                             width=150,
+        #                             height=30,
+        #                             text_color='white',
+        #                             corner_radius=10)
+        # self.fetch_Entry.configure(state='normal')
+        # self.fetch_Entry.place(relx=0.19, rely=0.2)
+
+        # self.fetch_button = ctk.CTkButton(master=self.options_Frame, 
+        #                                     font=self.font2, text_color='white', 
+        #                                     text='Fetch', fg_color='#06911f', 
+        #                                     hover_color='#06911f', 
+        #                                     bg_color = '#09112e', 
+        #                                     cursor= 'hand2', corner_radius=5, width=120, command=self.fetchFile)
+        # self.fetch_button.place(relx=0.25, rely=0.35)
+
+        # #### DELETE BUTTON
+        # self.delete_Entry = ctk.CTkEntry(master=self.options_Frame,
+        #                             placeholder_text='Delete File name',
+        #                             width=150,
+        #                             height=30,
+        #                             text_color='white',
+        #                             corner_radius=10)
+        # self.delete_Entry.configure(state='normal')
+        # self.delete_Entry.place(relx=0.19, rely=0.5)
+
+        # self.delete_button = ctk.CTkButton(master=self.options_Frame, 
+        #                                     font=self.font2, text_color='white', 
+        #                                     text='Delete', fg_color='red', 
+        #                                     hover_color='#990000', 
+        #                                     cursor= 'hand2', corner_radius=5, width=120, command=self.deleteFile)
+        # self.delete_button.place(relx=0.25, rely=0.65)
+        
 
     def openFile(self): 
         filepath = filedialog.askopenfilename()
@@ -201,6 +251,9 @@ class MyApp:
         self.client.quitCli()
 
     def fetchFile(self):
+        if not self.fetch_Entry.get():
+            messagebox.showerror("Error", "Please fill in filename!")
+            return
         # Create a loading indicator label
         loading_label = tk.Label(master=self.repo_frame, text='Loading...', fg='white',bg='black', font=("Arial", 14))
         loading_label.pack(padx=10, pady=10,side='bottom')
