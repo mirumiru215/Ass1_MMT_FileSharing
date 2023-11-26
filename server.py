@@ -14,7 +14,7 @@ def get_local_ip():
     return IP
  
 SERVER_IP = get_local_ip()
-SERVER_PORT = 4869
+SERVER_PORT = 1502
 #SERVER_IP = sk.gethostbyname(sk.gethostname())
 
 SIZE = 1024
@@ -63,7 +63,6 @@ class Server:
 
     def handle_client(self, client_socket, client_address, client_name):
         while True:
-            
             # Receive client's requests
             try:
                 client_request = client_socket.recv(SIZE).decode(FORMAT)
@@ -86,7 +85,7 @@ class Server:
                     else:
                         cmd = 'ERROR'
                         msg = 'FileName existed in repository'
-                else:
+                else: #client_address chua co trong filelist
                     self.clientFileList[client_address] = fileName[:-1]
                     cmd = 'OK'
                     msg = 'Uploaded successfully!'
@@ -116,6 +115,10 @@ class Server:
 
             elif client_command == 'ERROR':
                 print(client_message)
+            elif client_command == 'DELETE':
+                fileName = client_message
+                self.clientFileList[client_address].remove(fileName)
+                self.send_message(client_socket, 'DONE', 'Deleted file')
 
             else:
                 print(f'Client {client_address} disconnected.')

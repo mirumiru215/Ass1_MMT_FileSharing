@@ -19,7 +19,7 @@ def get_local_ip():
     return IP
 
 SERVER_IP = get_local_ip()
-SERVER_PORT = 4869
+SERVER_PORT = 1502
 
 class ServerUI:
     def __init__(self):

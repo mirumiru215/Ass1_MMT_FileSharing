@@ -66,7 +66,7 @@ class MyApp:
             messagebox.showerror("Error", "Please fill in both Server IP and Hostname!")
             return
         SERVER_IP = self.serverIP_Entry.get()
-        SERVER_PORT = 4869
+        SERVER_PORT = 1502
         hostname = self.hostname_Entry.get()
 
         self.client = Client(SERVER_IP, SERVER_PORT, hostname)
@@ -136,13 +136,13 @@ class MyApp:
 
         #### FETCH BUTTON
         self.fetch_Entry = ctk.CTkEntry(master=self.options_Frame,
-                                    placeholder_text='File name',
+                                    placeholder_text='Fetch file name',
                                     width=150,
                                     height=30,
                                     text_color='white',
                                     corner_radius=10)
         self.fetch_Entry.configure(state='normal')
-        self.fetch_Entry.place(relx=0.19, rely=0.3)
+        self.fetch_Entry.place(relx=0.19, rely=0.2)
 
         self.fetch_button = ctk.CTkButton(master=self.options_Frame, 
                                             font=self.font2, text_color='white', 
@@ -150,15 +150,31 @@ class MyApp:
                                             hover_color='#06911f', 
                                             bg_color = '#09112e', 
                                             cursor= 'hand2', corner_radius=5, width=120, command=self.fetchFile)
-        self.fetch_button.place(relx=0.25, rely=0.45)
+        self.fetch_button.place(relx=0.25, rely=0.35)
 
+        #### DELETE BUTTON
+        self.delete_Entry = ctk.CTkEntry(master=self.options_Frame,
+                                    placeholder_text='Delete File name',
+                                    width=150,
+                                    height=30,
+                                    text_color='white',
+                                    corner_radius=10)
+        self.delete_Entry.configure(state='normal')
+        self.delete_Entry.place(relx=0.19, rely=0.5)
+
+        self.delete_button = ctk.CTkButton(master=self.options_Frame, 
+                                            font=self.font2, text_color='white', 
+                                            text='Delete', fg_color='red', 
+                                            hover_color='#990000', 
+                                            cursor= 'hand2', corner_radius=5, width=120, command=self.deleteFile)
+        self.delete_button.place(relx=0.25, rely=0.65)
         #### DISCONNECT BUTTON
         self.quit_Button = ctk.CTkButton(master=self.options_Frame, 
                                             font=self.font2, text_color='white', 
                                             text='Disconnect', fg_color='red', 
                                             hover_color='#990000', 
                                             cursor= 'hand2', corner_radius=5, width=120, command=self.quitCli)
-        self.quit_Button.place(relx=0.25, rely=0.8)
+        self.quit_Button.place(relx=0.25, rely=0.85)
 
 
     def openFile(self): 
@@ -204,6 +220,18 @@ class MyApp:
         thread = threading.Thread(target=fetch_thread)
         thread.start()
 
+    def deleteFile(self):
+        if not self.delete_Entry.get():
+            messagebox.showerror("Error", "Please fill in filename!")
+            return
+        msg = self.client.deleteFile(self.delete_Entry.get())
+        messagebox.showinfo("Notice",msg)
+        self.repo_list.delete(0,END)
+        path = os.getcwd()
+        newpath = path + '/repository'
+        repo_filename = os.listdir(newpath)
+        for filename in repo_filename:
+            self.repo_list.insert(tk.END,filename)
 
     #############DON'T DELETE THIS#################
     # def fetchFile(self):

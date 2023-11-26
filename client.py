@@ -6,14 +6,14 @@ import time
 
 # Enter the server's IP
 # SERVER_IP = input("Enter Server's IP: ")
-# SERVER_PORT = 4869
+# SERVER_PORT = 1502
 
 SIZE = 1024
 REPOSITORY_PATH = 'repository/'
 FORMAT = 'utf-8'
 
 #SERVER_IP = sk.gethostbyname(sk.gethostname())
-#SERVER_PORT = 4869
+#SERVER_PORT = 1502
 
 def get_local_ip():
     s = sk.socket(sk.AF_INET, sk.SOCK_DGRAM)
@@ -34,7 +34,6 @@ class Client:
         self.server_Port = port
         self.hostname = hostname
         self.isConnected = False
-
         self.peer_socket = None
 
 
@@ -63,7 +62,7 @@ class Client:
         # Listen to other peers
         self.client_server = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
         self.client_server.setsockopt(sk.SOL_SOCKET, sk.SO_REUSEADDR, 1)
-        self.client_server.bind((get_local_ip(), 6969))
+        self.client_server.bind((get_local_ip(), 2153))
         self.client_server.listen()
         
         self.listen_thread = threading.Thread(target=self.listening)
@@ -71,7 +70,7 @@ class Client:
 
 
 
-    def getfile_from_target_peer(self, target_IP = '127.0.0.1', target_Port = 6969, fileName = ''):
+    def getfile_from_target_peer(self, target_IP = '127.0.0.1', target_Port = 2153, fileName = ''):
         self.peer_socket = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
         try:
             self.peer_socket.connect((target_IP, target_Port))
@@ -132,7 +131,7 @@ class Client:
         self.client_server.close()
         exit(0)
     ####### Disconnect from server ########
-    def disconnect(self, my_socket = sk.socket, other_IP = '127.0.0.1', other_Port = 4869):
+    def disconnect(self, my_socket = sk.socket, other_IP = '127.0.0.1', other_Port = 1502):
 
         msg = f'DISCONNECT@Disconnected from server {other_IP}:{other_Port}'
 
@@ -195,7 +194,7 @@ class Client:
                 if (clientList):
                     print(server_message, clientList)
                     target_IP = clientList[0].split(':')[0]
-                    self.getfile_from_target_peer(target_IP, 6969, fname)
+                    self.getfile_from_target_peer(target_IP, 2153, fname)
                     return server_message
                 else:
                     print('File not found on the server')
@@ -246,3 +245,14 @@ class Client:
         file.close()
         print('Sent ' + fileName + f' to peer: {receiver_IP}')
         receiver.close()
+
+    def deleteFile(self, fname):
+        filePath = os.path.join(REPOSITORY_PATH, fname)
+        os.remove(filePath)
+        msg = 'DELETE@' + fname
+        self.client_socket.send(msg.encode(FORMAT))
+
+        server_respond = self.client_socket.recv(SIZE).decode(FORMAT)
+        _, server_message = server_respond.split('@')
+        print(server_message)
+        return server_message
