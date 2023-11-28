@@ -205,7 +205,7 @@ class Client:
         else:
             msg = 'ERROR@File existed in repository.'
             print(msg.split('@')[1])
-            return msg
+            return msg.split('@')[1]
 
 
     def listening(self):
